@@ -56,7 +56,6 @@ namespace asp_mvc_2.Models.EntityManager
                 }
             }
         }
-
         internal string GetUserPassword(string loginName)
         {
             using (DemoDBEntities db = new DemoDBEntities())
@@ -69,7 +68,6 @@ o.LoginName.ToLower().Equals(loginName));
                     return string.Empty;
             }
         }
-
         public bool IsLoginNameExist(string loginName)
         {
             using (DemoDBEntities db = new DemoDBEntities())
@@ -115,7 +113,6 @@ q.SYSUserID.Equals(SU.SYSUserID)
                 return roles;
             }
         }
-
         public int GetUserID(string loginName)
         {
             using (DemoDBEntities db = new DemoDBEntities())
@@ -311,6 +308,37 @@ userID)?.FirstOrDefault().LOOKUPRoleID;
                     }
                 }
             }
+        }
+        public UserProfileView GetUserProfile(int userID)
+        {
+            UserProfileView UPV = new UserProfileView();
+            using (DemoDBEntities db = new DemoDBEntities())
+            {
+                var user = db.SYSUsers.Find(userID);
+                if (user != null)
+                {
+                    UPV.SYSUserID = user.SYSUserID;
+                    UPV.LoginName = user.LoginName;
+                    UPV.Password = user.PasswordEncryptedText;
+
+                    var SUP = db.SYSUserProfiles.Find(userID);
+                    if (SUP != null)
+                    {
+                        UPV.FirstName = SUP.FirstName;
+                        UPV.LastName = SUP.LastName;
+                        UPV.Gender = SUP.Gender;
+                    }
+
+                    var SUR = db.SYSUserRoles.Find(userID);
+                    if (SUR != null)
+                    {
+                        UPV.LOOKUPRoleID = SUR.LOOKUPRoleID;
+                        UPV.RoleName = SUR.LOOKUPRole.RoleName;
+                        UPV.IsRoleActive = SUR.IsActive;
+                    }
+                }
+            }
+            return UPV;
         }
     }
 }
